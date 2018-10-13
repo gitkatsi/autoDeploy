@@ -73,7 +73,10 @@ typings/
 .serverless
 
 #json files
-*.json
+token.json
+credentials.json
+localPassword.json
+
 
 #download folders
 downloads/

@@ -1,0 +1,19 @@
+{
+  "name": "auto-deploy_000",
+  "version": "0.5.0",
+  "description": "Automate deployment for 000bot based on google drive files",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/palladas/google_drive_fetcher/src/master/"
+  },
+  "author": "palladas",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "googleapis": "^27.0.0"
+  }
+}
