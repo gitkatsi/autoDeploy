@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path")
 //read password from local file and not hardcode it in code
 
-const password = JSON.parse(fs.readFileSync(path.join("services","localPassword.json"), "utf-8")).password;
+const password = JSON.parse(fs.readFileSync(path.join(__dirname,"localPassword.json"), "utf-8")).password;
 
 //resolve true if active false if not
 const isActive = function (service) {
@@ -55,5 +55,8 @@ const handleService = function(action, service){
     }
     })
 }
+
+module.exports.handleService = handleService
+module.exports.isActive = isActive
 
 

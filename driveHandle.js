@@ -1,4 +1,5 @@
-function getFiles() {
+var events = require("events");
+var event = new events;
 
   const fs = require('fs');
   const readline = require('readline');
@@ -10,11 +11,13 @@ function getFiles() {
   const SCOPES = ['https://www.googleapis.com/auth/drive'];
   const TOKEN_PATH = 'token.json';
 
+  const startActions = function(){
   // Load client secrets from a local file.
   fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
-    authorize(JSON.parse(content), getFile);
+    authorize(JSON.parse(content), driveHandler);
   });
+}
 
   /**
    * Create an OAuth2 client with the given credentials, and then execute the
@@ -88,9 +91,9 @@ function getFiles() {
         if (err) return console.log('The API returned an error: ' + err);
         const files = res.data.files;
         if (files.length) {
-          console.log('Files:');
+          console.log('Files to Download:');
           files.map((file) => {
-            console.log(`${file.name} (${file.id}) (${file.mimeType})`);
+            console.log(`${file.name} (${file.mimeType})`);
             fileData.push(file)
           });
         } else {
@@ -101,14 +104,14 @@ function getFiles() {
 
     })
   }
+  
 
-  async function getFile(auth) {
-    const drive = google.drive({
-      version: 'v3',
-      auth
-    })
-    var fileData = await fetchfile(drive)
+  async function getFiles(drive) {
+    var count = 0;
+    var fileData = await fetchfile(drive);
+    return new Promise((resolve, reject) => {
     fileData.forEach(element => {
+      try{
       var dest = fs.createWriteStream(path.join(__dirname, "downloads", element.name));
       drive.files.get({
           fileId: element.id,
@@ -120,16 +123,49 @@ function getFiles() {
         function (err, res) {
           res.data
             .on('end', () => {
-              console.log('Done');
-            })
+              count = count + 1;
+              console.log(`Finished downloading ${element.name}`)
+              deleteFiles(drive, element.id) 
+              if (count === fileData.length) {
+                resolve(true);
+                console.log("finished")
+              }
+              }
+            )
             .on('error', err => {
               console.log('Error', err);
             })
             .pipe(dest);
+            
         }
       )
+      } catch (error) {
+        reject(error)
+        console.log(error);
+      }
     });
+    
+     })
   }
+
+
+const deleteFiles = function(drive, fileId){
+  drive.files.delete({
+        fileId: fileId
+      })
 }
 
-module.exports.getFiles = getFiles();
+
+var driveHandler = async function(auth) {
+      const drive = google.drive({
+        version: 'v3',
+        auth
+      })
+  await getFiles(drive);
+  event.emit("newFiles")
+}
+
+//module.exports.getFiles = driveHandler();
+module.exports.start = startActions;
+module.exports.status = event;
+
