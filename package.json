@@ -1,6 +1,6 @@
 {
   "name": "auto-deploy_000",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Automate deployment for 000bot based on google drive files",
   "main": "index.js",
   "scripts": {
