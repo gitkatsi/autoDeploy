@@ -8,7 +8,8 @@ const TripleZeroDev = "TripleZero2.service"
 //todo. stop restarting app if there are pending downloads 
 //propably emit an event with true false values to start stop timer and extend
 console.log("Auto deployment is active");
-setInterval(driveHandle.start, 1000*60*10)
+driveHandle.start();
+setInterval(driveHandle.start, 1000*60*5)
 
 var stopServices = function () {
     const cmd = "stop"
@@ -33,7 +34,7 @@ driveHandle.status.on("newFiles", () => {
             2000
         })
     }else{
-        console.log("Starting files copy")
+        console.log("Copying Files")
         fileManage.handleFiles();
     }
 })
