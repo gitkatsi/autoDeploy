@@ -9,6 +9,11 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\index.js"
+        }, {
+            "type": "node",
+            "request": "launch",
+            "name": "Google Drive Handler",
+            "program": "${workspaceFolder}\\driveHandle.js"
         }
     ]
 }
