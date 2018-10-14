@@ -1,6 +1,7 @@
 var events = require("events");
 var event = new events;
 
+
   const fs = require('fs');
   const readline = require('readline');
   const {
@@ -80,7 +81,7 @@ var event = new events;
 
 
 
-  function fetchfile(drive) {
+  function listFiles(drive) {
     var fileData = new Array
     return new Promise((resolve, reject) => {
 
@@ -91,9 +92,7 @@ var event = new events;
         if (err) return console.log('The API returned an error: ' + err);
         const files = res.data.files;
         if (files.length) {
-          console.log('Files to Download:');
           files.map((file) => {
-            console.log(`${file.name} (${file.mimeType})`);
             fileData.push(file)
           });
         } else {
@@ -108,10 +107,17 @@ var event = new events;
 
   async function getFiles(drive) {
     var count = 0;
-    var fileData = await fetchfile(drive);
+    var fileData = await checkFolders(drive);
+    if (fileData.length === 0){
+      console.log('No changes detected!!!')
+    }
     return new Promise((resolve, reject) => {
     fileData.forEach(element => {
       try{
+        console.log(`${element.name} ${element.mimeType}`)
+        if (element.mimeType === "application/vnd.google-apps.file"){
+          return
+        }
       var dest = fs.createWriteStream(path.join(__dirname, "downloads", element.name));
       drive.files.get({
           fileId: element.id,
@@ -125,10 +131,10 @@ var event = new events;
             .on('end', () => {
               count = count + 1;
               console.log(`Finished downloading ${element.name}`)
-              deleteFiles(drive, element.id) 
+
               if (count === fileData.length) {
                 resolve(true);
-                console.log("finished")
+                console.log("I got all the new files...")
               }
               }
             )
@@ -149,10 +155,51 @@ var event = new events;
   }
 
 
-const deleteFiles = function(drive, fileId){
-  drive.files.delete({
-        fileId: fileId
-      })
+var checkForChanges = async function(drive)
+{
+  tokenNew = await getToken(drive)
+  var savedToken = JSON.parse(fs.readFileSync(path.join(__dirname, "lastCheck.json"), "utf-8"))
+  pageToken = savedToken.token
+  savedToken.token = tokenNew
+  fs.writeFileSync(path.join(__dirname, "lastCheck.json"), JSON.stringify(savedToken))
+  return new Promise((resolve, reject) => {
+  drive.changes.list({
+    pageToken: pageToken,
+    fields: '*'
+  }, (err, resp) => {
+    if (err) {
+      reject(err);
+    } else {
+      resolve(resp.data.changes)
+    }
+  })
+})
+}
+
+var getToken = function(drive){
+  var token;
+  return new Promise((resolve, reject) => {
+drive.changes.getStartPageToken({}, function (err, res) {
+  console.log('Looking for changes');
+  resolve(res.data.startPageToken)
+});
+  })}
+
+
+var checkFolders = async function (drive){
+  var fileDataFolder = await listFiles(drive);
+  var fileDataChangedArray = await checkForChanges(drive);
+  var fileDataChanged = fileDataChangedArray.map(a => a.fileId);
+  var downloadList = new Array;
+return new Promise((resolve,reject)=>{
+for(i=0; i<fileDataFolder.length; i++){
+
+  if (fileDataChanged.indexOf(fileDataFolder[i].id) > -1) {
+  downloadList.push(fileDataFolder[i])
+  }
+}
+resolve(downloadList)
+})
 }
 
 
@@ -165,7 +212,9 @@ var driveHandler = async function(auth) {
   event.emit("newFiles")
 }
 
-//module.exports.getFiles = driveHandler();
+
+//startActions();
+
+
 module.exports.start = startActions;
 module.exports.status = event;
-
