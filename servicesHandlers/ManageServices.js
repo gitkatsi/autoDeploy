@@ -10,7 +10,7 @@ const isActive = function (service) {
         const {
             exec
         } = require('child_process');
-        const restartServCommand = `echo ${password} | sudo -S systemctl is-active `
+        const restartServCommand = `systemctl is-active `
         const cmd = restartServCommand + service;
         try {
             exec(cmd, (error, stdout, stderr) => {
@@ -55,6 +55,10 @@ const handleService = function(action, service){
     }
     })
 }
+
+
+
+
 
 module.exports.handleService = handleService
 module.exports.isActive = isActive
