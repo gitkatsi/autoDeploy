@@ -20,16 +20,16 @@ const handleFiles = async function () {
     await fsExtra.emptyDir(destinationBackup)
     await fsExtra.emptyDir(destinationDevBackup)
     console.log("Emptying Backup folders")
-    if (await fsExtra.pathExists(downloadsRemove)){
+    if (await fsExtra.pathExists(downloadsRemove)) {
         fsExtra.remove(downloadsRemove)
     }
     if (fs.existsSync(confBotFiles)) {
-    await fsExtra.copy(confBotFiles, confBotFilesDest);
-    console.log("Copying configBot.json")
+        await fsExtra.copy(confBotFiles, confBotFilesDest);
+        console.log("Copying configBot.json")
     }
     if (fs.existsSync(confRepoFiles)) {
-    await fsExtra.copy(confRepoFiles, confRepoFilesDest);
-    console.log("Copying configRepository.json")
+        await fsExtra.copy(confRepoFiles, confRepoFilesDest);
+        console.log("Copying configRepository.json")
     }
     await fsExtra.copy(currentBot, destinationBackup)
     console.log("Backing up Main Bot");

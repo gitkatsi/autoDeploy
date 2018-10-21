@@ -9,7 +9,7 @@ const TripleZeroDev = "TripleZero2.service"
 //propably emit an event with true false values to start stop timer and extend
 console.log("Auto deployment is active");
 driveHandle.start();
-setInterval(driveHandle.start, 1000*60*5)
+setInterval(driveHandle.start, 1000 * 60 * 5)
 
 var stopServices = function () {
     const cmd = "stop"
@@ -31,9 +31,9 @@ driveHandle.status.on("newFiles", () => {
         console.log("Services are still active. Retrying...")
         setTimeout(() => {
             stopServices(),
-            2000
+                2000
         })
-    }else{
+    } else {
         console.log("Copying Files")
         fileManage.handleFiles();
     }
