@@ -9,8 +9,8 @@ const downloadsRemove = path.join(__dirname, "..", "downloads", "JsonAppSettings
 
 const currentBot = path.join(__dirname, "..", "..", "bots", "bot")
 const currentBotDev = path.join(__dirname, "..", "..", "bots", "bot2")
-const destinationBackup = path.join(__dirname, "..", "..", "bots", "TripleZeroBackup", "bot")
-const destinationDevBackup = path.join(__dirname, "..", "..", "bots", "TripleZeroBackup", "bot2")
+const destinationBackup = path.join(__dirname, "..", "..", "bots", "autoDeploy", "bot")
+const destinationDevBackup = path.join(__dirname, "..", "..", "bots", "autoDeploy", "bot2")
 const confBotFiles = path.join(__dirname, "..", "downloads", "configBot.json")
 const confRepoFiles = path.join(__dirname, "..", "downloads", "configRepository.json");
 const confBotFilesDest = path.join(__dirname, "..", "..", "bots", "bot", "JsonAppSettings", "configBot.json")
@@ -46,3 +46,5 @@ const handleFiles = async function () {
 
 module.exports.handleFiles = handleFiles;
 module.exports.status = eventEmitter
+
+//handleFiles();
